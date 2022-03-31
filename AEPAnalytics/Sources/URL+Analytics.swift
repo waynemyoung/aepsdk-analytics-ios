@@ -27,9 +27,23 @@ extension URL {
             return nil
         }
 
+        var hostName = state.host
+        var port: Int?
+
+        if let host = hostName, host.contains(":") {
+            let hostComponents = host.components(separatedBy: ":")
+            if hostComponents.count == 2 {
+                hostName = hostComponents[0]
+                port = Int(hostComponents[1])
+            }
+        }
+
         var urlComponent = URLComponents()
         urlComponent.scheme = "https"
-        urlComponent.host = state.host
+        urlComponent.host = hostName
+        if port != nil {
+            urlComponent.port = port
+        }
         urlComponent.path = "/b/ss/\(state.rsids ?? "")/\(getAnalyticsResponseType(state: state))/\(version)/s"
 
         let url = urlComponent.url
